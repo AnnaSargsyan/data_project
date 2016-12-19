@@ -1,0 +1,129 @@
+#include<stdlib.h>
+#include<stdio.h>
+#include <iostream>
+#include<string.h>
+
+
+#define MAX    100
+
+using namespace std;
+
+class productEntrance{
+public:
+    float unit_cost;
+    int quantity;
+    char title[20];
+    char corporation[20];
+};
+
+class Shop{
+public:
+    int quantityProduct;
+    productEntrance database[MAX];
+    
+    Shop(){
+        quantityProduct = 0;
+    }
+    void insertProduct( char productname[], char corporation[], int q,float c );
+    void removeProduct( char productTitle[]);
+    productEntrance *search( char productTitle[]);
+    void updateProduct(char productTitle[], int result, float cost);
+};
+
+void Shop::insertProduct( char productTitle[], char corporation[], int q, float c){
+    strcpy( database[quantityProduct].title, productTitle);
+    strcpy( database[quantityProduct].corporation, corporation);
+    database[quantityProduct].quantity = q;
+    database[quantityProduct].unit_cost = c;
+    cout << "Success, the product inserted to the list" << endl;
+    ++quantityProduct;
+}
+
+void Shop::removeProduct( char productTitle[]){
+    int j;
+    for( j = 0; j < quantityProduct; j++){
+        if( strcmp( productTitle, database[j].title) == 0){
+            database[j].quantity--;
+            cout << "Success, the product deleted from the list"<< endl;
+            return;
+        }
+    }
+    cout << "There is no such product."<<endl;
+}
+
+productEntrance *Shop::search( char productTitle[]){
+    int k;
+    for( k = 0; k < quantityProduct; k++){
+        if( strcmp( productTitle, database[k].title) == 0)
+            return &database[k];
+    }
+    return NULL;
+}
+
+void Shop::updateProduct(char productTitle[], int result, float cost)
+{
+    productEntrance *item = search(productTitle);
+    if(item == NULL)
+    {
+        cout<<"Try again the item was not found."<<endl;
+        return;
+    }
+    item->quantity += result;
+    item->unit_cost = cost;
+}
+
+int main(){
+    Shop sto;
+    char option, title[20], corporation[20], quantity[50],unit_cost[70];
+    while( option != '5' ){
+        cout << "\n----------->Enter the one that describes your choice:<------------\n";
+        cout << "Enter 1 for insertion of new product"<<endl;
+        cout << "Enter 2 for deletion of product from the list"<<endl;
+        cout << "Enter 3 for finding item in the list"<<endl;
+        cout << "Enter 4 for updating the list"<<endl;
+        cout << "Enter 5 for exit from programm"<<endl;
+        
+        cin.getline( title, 90);
+        option = title[0];
+        
+        switch( option){
+                
+            case '1':
+                cout << "Enter Title of Product, corporation and qunatity,unit cost in per line:\n";
+                cin.getline( title, 90);
+                cin.getline(corporation, 90);
+                cin.getline(quantity, 90);
+                cin.getline(unit_cost, 90);
+                sto.insertProduct( title, corporation, atoi(quantity),atof(unit_cost));
+                break;
+            case '2':
+                cout << "Enter title of product you want to remove from the list:\n";
+                cin.getline(title, 90);
+                sto.removeProduct(title);
+                break;
+            case '3':
+                cout << "Enter the name of product that you want to find:\n";
+                cin.getline(title, 90);
+                productEntrance *test;
+                test = sto.search( title );
+                if( test != NULL){
+                    cout<<"---------------->Searching Result<---------------------" <<endl;
+                    cout << "Product is not found\n" <<"Title of the Product:"<< test->title << endl <<"Company name:"<< test->corporation << endl <<"Quantity available:"<< test->quantity << endl<<"Unit cost:"<<test->unit_cost << endl;
+                }
+                else
+                    cout << "Sorry,the product does not exist in the list\n";
+                break;
+            case '4':
+                cout << "Enter details for update...\n";
+                cout << "Enter title: "; cin.getline(title, 90);
+                cout << "Enter total new entry: "; cin.getline(quantity, 90);
+                cout << "Enter new cost: "; cin.getline(unit_cost, 90);
+                sto.updateProduct(title, atoi(quantity), atof(unit_cost));
+                break;
+                /*        case 'e':
+                 exit(0);
+                 break;*/
+        }
+    }
+    return 0;
+}
